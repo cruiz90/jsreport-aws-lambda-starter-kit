@@ -1,0 +1,12 @@
+{
+    "name": "Book",
+    "creationDate": {
+        "$$date": 1708456242982
+    },
+    "modificationDate": {
+        "$$date": 1708456242983
+    },
+    "shortid": "lNM9QvZ",
+    "_id": "mbMemfmepRsTEAi0",
+    "$entitySet": "folders"
+}

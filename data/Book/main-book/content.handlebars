@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <style>
+        {{asset "book-styles.css"}}
+    </style>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!--
+        TOC
+        -----------
+        we render TOC template twice
+        the first in the main template - this is needed for inner pdf links
+        the second time it is rendered as merge operation in pdf utils - this is needed to for gettign page numbers in TOC
+
+    -->
+    {{#if result.topicPages}}
+        {#child ./toc @template.recipe=html}
+    {{/if}}
+    <div class="content main-pdf">
+        {#child ./figures-tables-lists @template.recipe=html}
+
+        {{#with result.body}}
+            <div style='page-break-before: always;'></div>
+            <div class="book-body">{{{this}}}</div>
+        {{/with}}
+        {{#level result.topicPages}}
+            {{#if body}}
+                <h1 id="{{topicId}}" class="{{type}}">{{title}}</h1>
+                {{{pdfAddPageItem id=topicId}}}
+                <div>{{{body}}}</div>
+            {{/if}}
+        {{/level}}
+
+        <span class="copyright-info">
+            {{#with result.copyright}}
+                {{this}}.
+            {{else}}
+                Copyright {{currentYear}}.
+            {{/with}}
+            {{~#with result.date}}
+                PDF Generated on {{this}}
+            {{/with}}
+        </span>
+    </div>
+</body>
+</html>

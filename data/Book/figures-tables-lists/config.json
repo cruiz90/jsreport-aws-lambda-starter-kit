@@ -1,0 +1,24 @@
+{
+    "name": "figures-tables-lists",
+    "engine": "handlebars",
+    "recipe": "chrome-pdf",
+    "data": {
+        "shortid": "rh0SV69fv"
+    },
+    "shortid": "HI3nQ0YhO",
+    "chrome": {
+        "printBackground": true,
+        "marginTop": "2cm",
+        "marginRight": "2cm",
+        "marginBottom": "2cm",
+        "marginLeft": "2cm"
+    },
+    "creationDate": {
+        "$$date": 1709057847465
+    },
+    "modificationDate": {
+        "$$date": 1716557932367
+    },
+    "_id": "flaiwJAnKmSNPB32",
+    "$entitySet": "templates"
+}
