@@ -1,0 +1,25 @@
+{
+    "name": "toc",
+    "engine": "handlebars",
+    "recipe": "chrome-pdf",
+    "data": {
+        "shortid": "rh0SV69fv"
+    },
+    "shortid": "w_uIP781o",
+    "chrome": {
+        "printBackground": true,
+        "marginTop": "2cm",
+        "marginRight": "2cm",
+        "marginBottom": "2cm",
+        "marginLeft": "2cm"
+    },
+    "creationDate": {
+        "$$date": 1708462866783
+    },
+    "modificationDate": {
+        "$$date": 1716565524122
+    },
+    "_id": "Qyg8goKJTJnvd8a8",
+    "$entitySet": "templates",
+    "pdfOperations": []
+}

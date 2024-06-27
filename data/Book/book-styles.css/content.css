@@ -1,0 +1,209 @@
+.page-break {
+    page-break-before: always;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.menu {
+    font-size: 48px;
+    border-top: solid 2px #74b900;
+}
+
+.submenu {
+    color: #74b900;
+    font-size: 36px;
+}
+
+table {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+p {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+body, html {
+    font-family: arial;
+}
+
+table p {
+    margin: 0;
+}
+
+/* h1, h2, h3, h4, h5, h6 {
+    font-weight: 400;
+} */
+
+.content a {
+    color: #000;
+    text-decoration: underline;
+    text-decoration-color: #74b900;
+}
+
+.main-pdf img {
+    max-width: 100%;
+}
+
+table {
+    box-sizing: border-box;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+pre {
+    text-wrap: wrap;
+}
+
+table thead td {
+    background-color: #eee;
+}
+
+table td {
+    border: solid 1px #999;
+    padding: 5px;
+    word-break: break-word;
+}
+
+table tbody tr:first-of-type {
+    background-color: #eee;
+}
+
+thead + tbody tr:first-of-type {
+    background: none;
+}
+
+thead + tfoot + tbody tr:first-of-type {
+    background: none;
+}
+
+thead:empty + tfoot + tbody tr:first-of-type {
+    background-color: #eee;
+}
+
+/*Code block styles*/
+.code-body {
+    border: 1px solid #eee;
+    border-left-width: 20px;
+    border-radius: 2px;
+    padding: 10px;
+    position: relative;
+    line-height: 1.57;
+}
+
+.code-body .keyword {
+    color: #0077aa;
+}
+
+.code-body .value {
+    color: #669900;
+}
+
+.call-out-box {
+    padding: 18px 95px 26px 53px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.call-out-box br {
+    display: none;
+}
+
+.call-out-box-title {
+    font-weight: 700;
+    font-size: large;
+    line-height: 1.5;
+}
+
+.call-out-box::before {
+    content: '';
+    width: 25px;
+    height: 25px;
+    display: inline;
+    position: absolute;
+    top: 20px;
+    left: 15px;
+    background-position: center;
+    background-clip: content-box;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.option-alert,
+.option-attention,
+.option-warning,
+.option-caution {
+    background-color: #f4dedf;
+}
+
+.option-alert::before,
+.option-attention::before,
+.option-warning::before,
+.option-caution::before {
+    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJjYWxsb3V0Ym94LWljb24tYWxlcnQiIHZpZXdCb3g9IjAgMCAyNCAyMSI+CiAgPHBhdGggZD0iTTEyIDguOTIzdjUuMzg1bTAgMS41Mzh2MS41MzlNMTIgMmwxMCAxNy42OUgyTDEyIDJ6IiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD4KPC9zdmc+Cg==");
+}
+
+.option-tip
+.option-confirmation {
+    background-color: #ddf0da;
+}
+
+.option-tip::before
+.option-confirmation::before {
+    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJjYWxsb3V0Ym94LWljb24tY2hlY2siIHZpZXdCb3g9IjAgMCAyMiAxNiI+CiAgPHBhdGggZD0iTTEgNy41IDcuNSAxNGwxMy0xMyIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPgo8L3N2Zz4=");
+}
+
+.option-info,
+.option-note,
+.option-important,
+.option-notices {
+    background-color: #ffffe0;
+}
+
+.option-info::before,
+.option-note::before,
+.option-important::before,
+.option-notices::before {
+    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJjYWxsb3V0Ym94LWljb24taW5mbyIgdmlld0JveD0iMCAwIDIyIDIyIj4KICA8cGF0aCBkPSJNMTEgNi4zODVWNC44NDZtMCAxMi4zMDh2LTkuMjNNMjEgMTFjMCA1LjUyMy00LjQ3NyAxMC0xMCAxMFMxIDE2LjUyMyAxIDExIDUuNDc3IDEgMTEgMXMxMCA0LjQ3NyAxMCAxMHoiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPgo8L3N2Zz4K");
+}
+
+table tr td:first-child:nth-last-child(2) img, table tr td:nth-child(2):last-child img {
+    max-width: 300px;
+}
+
+.copyright-info {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+}
+
+bsp-code-inline {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #4b4545;
+    display:inline-block;
+    padding: 1px 4px;
+}

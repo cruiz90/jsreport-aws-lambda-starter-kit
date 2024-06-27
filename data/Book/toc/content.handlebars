@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            html,
+            body {
+                margin: 0px;
+                padding: 0px;
+                /*this disables the scrollbars of page thus making the available with the same on both renders*/
+                /*this is needed to have the TOC page at the same position than the main template.*/
+                overflow: hidden;
+            }
+            .toc-title {
+                margin-top: 0px;
+                text-align: center;
+                font-size: 24px;
+                font-family: arial;
+            }
+            .toc-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                border-bottom: 1px dashed rgb(200, 200, 200);
+                width: 100%;
+            }
+            .toc span {
+                font-size: 16px;
+                text-align: right;
+            }
+            .toc li {
+                list-style: none;
+                padding-bottom: 15px;
+            }
+            .toc ul {
+                font-size: 20px;
+                font-family: arial;
+            }
+            .toc ul ul,
+            .toc ul ul span {
+                font-size: 0.8em;
+            }
+            .toc ul {
+                padding-left: 0em;
+            }
+            .toc ul ul {
+                padding-left: 15px;
+            }
+            .toc a {
+                text-decoration: none;
+                color: black;
+            }
+            .toc-no-border {
+                border-bottom-color: transparent;
+            }
+            .toc-hidden {
+                visibility: hidden;
+            }
+            .toc>ul>li a {
+                color: #74b900;
+            }
+        </style>
+    </head>
+    <body>
+        {{#if result.topicPages}}
+            <div class='toc'>
+                <h1 class='toc-title {{{addClassOnPdfMerge @root "toc-hiddden"}}}'>Table of contents</h1>
+                <ul>
+                    {{!-- {{#with result.figures}}
+                    <li>
+                        <div class='toc-content {{{addClassOnPdfMerge @root "toc-no-border"}}}'>
+                            <a class='{{{addClassOnPdfMerge @root "toc-hiddden"}}}' href='#figuresList'
+                                data-pdf-outline>
+                                List of Figures
+                            </a>
+                            <span>{{getPage @root "figuresList"}}</span>
+                        </div>
+                    </li>
+                    {{/with}}
+                    {{#with result.tables}}
+                    <li>
+                        <div class='toc-content {{{addClassOnPdfMerge @root "toc-no-border"}}}'>
+                            <a class='{{{addClassOnPdfMerge @root "toc-hiddden"}}}' href='#tablesList'
+                                data-pdf-outline>
+                                List of Tables
+                            </a>
+                            <span>{{getPage @root "tablesList"}}</span>
+                        </div>
+                    </li>
+                    {{/with}} --}}
+                    {{#level result.topicPages null}}
+                    <li>
+                        <div class='toc-content {{{addClassOnPdfMerge @root "toc-no-border"}}}'>
+                            <a class='{{{addClassOnPdfMerge @root "toc-hiddden"}}}' href='#{{topicId}}'
+                                data-pdf-outline data-pdf-outline-parent='{{parent}}'>
+                                {{title}}
+                            </a>
+                            <span>{{getPage @root topicId}}</span>
+                        </div>
+                    </li>
+                    {{/level}}
+                </ul>
+            </div>
+        {{/if}}
+    </body>
+</html>

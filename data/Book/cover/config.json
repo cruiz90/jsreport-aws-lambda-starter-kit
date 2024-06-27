@@ -1,0 +1,22 @@
+{
+    "name": "cover",
+    "engine": "handlebars",
+    "recipe": "chrome-pdf",
+    "data": null,
+    "shortid": "8b03WZU_g",
+    "chrome": {
+        "printBackground": true,
+        "marginRight": "2cm",
+        "marginLeft": "2cm",
+        "marginBottom": "2cm",
+        "marginTop": "2cm"
+    },
+    "creationDate": {
+        "$$date": 1708462690085
+    },
+    "modificationDate": {
+        "$$date": 1709152501615
+    },
+    "_id": "2VRGnk8Q9OZF6gkT",
+    "$entitySet": "templates"
+}

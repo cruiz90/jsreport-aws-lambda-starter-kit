@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            /*this disables the scrollbars of page thus making the available with the same on both renders*/
+            /*this is needed to have the TOC page at the same position than the main template.*/
+            overflow: hidden;
+            font-family: arial;
+        }
+        /* .list-item {
+            display: block;
+            margin-top: 10px;
+        } */
+        .list-title {
+            margin-top: 0px;
+            text-align: center;
+            font-size: 24px;
+            font-family: arial;
+        }
+        .list-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px dashed rgb(200, 200, 200);
+            width: 100%;
+        }
+        .list span {
+            font-size: 16px;
+            text-align: right;
+        }
+        .list li {
+            list-style: none;
+            padding-bottom: 15px;
+        }
+        .list ul {
+            font-size: 20px;
+            font-family: arial;
+        }
+        .list ul ul,
+        .list ul ul span {
+            font-size: 0.8em;
+        }
+        .list ul {
+            padding-left: 0em;
+        }
+        .list ul ul {
+            padding-left: 15px;
+        }
+        .list a {
+            text-decoration: none;
+            color: black;
+        }
+        .list-no-border {
+            border-bottom-color: transparent;
+        }
+        .list-hidden {
+            visibility: hidden;
+        }
+        .list>ul>li a {
+            color: #74b900;
+        }
+
+        .list a {
+            color: #74b900;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div style='page-break-before: always;'></div>
+        {{#with result.figures}}
+            <div style='page-break-before: always;'></div>
+            <div class="figures list">
+                <h1 id="figuresList">List of Figures</h1>
+                {{{pdfAddPageItem id="figuresList"}}}
+                <ul>
+                {{#each this}}
+                    <li>
+                        <div class="list-content">
+                            <a class="list-item" href="#{{anchor}}">Figure {{@index}}. {{image}}</a>
+                            <span>{{getPage @root anchor}}</span>
+                        </div>
+                    </li>
+                {{/each}}
+                </ul>
+            </div>
+        {{/with}}
+        {{#with result.tables}}
+            <div style='page-break-before: always;'></div>
+            <div class="tables list">
+                <h1 id="tablesList">List of Tables</h1>
+                {{{pdfAddPageItem id="tablesList"}}}
+                <ul>
+                    {{#each this}}
+                        <li>
+                            <div class="list-content">
+                                <a class="list-item" href="#{{anchor}}">Table {{@index}}. {{table}}</a>
+                                <span>{{getPage @root anchor}}</span>
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+        {{/with}}
+    </body>
+</html>

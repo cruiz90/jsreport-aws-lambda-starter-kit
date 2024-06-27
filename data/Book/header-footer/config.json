@@ -1,0 +1,20 @@
+{
+    "name": "header-footer",
+    "engine": "handlebars",
+    "recipe": "chrome-pdf",
+    "data": null,
+    "shortid": "d-IIS7RWC",
+    "chrome": {
+        "printBackground": true,
+        "marginRight": "2cm",
+        "marginLeft": "2cm"
+    },
+    "creationDate": {
+        "$$date": 1708462791953
+    },
+    "modificationDate": {
+        "$$date": 1709147309407
+    },
+    "_id": "GZCPIOUWRO0RaU4l",
+    "$entitySet": "templates"
+}
