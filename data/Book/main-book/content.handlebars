@@ -33,6 +33,12 @@
             {{/if}}
         {{/level}}
 
+        {{#with result.legalNotice}}
+            <div class="legal-info">
+                {{this}}
+            </div>
+        {{/with}}
+
         <span class="copyright-info">
             {{#with result.copyright}}
                 {{this}}.
