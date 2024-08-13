@@ -2,6 +2,32 @@
     <head>
         <meta charset="UTF-8">
         <style>
+            @font-face {
+                font-family: "NVIDIASans";
+                src: url({#asset NVIDIASans-Light.woff2 @encoding=dataURI}) format('woff2');
+                font-weight: 300;
+            }
+            @font-face {
+                font-family: "NVIDIASans";
+                src: url({#asset NVIDIASans-Medium.woff2 @encoding=dataURI}) format('woff2');
+                font-weight: 400;
+            }
+            @font-face {
+                font-family: "NotoSans";
+                src: url({#asset NotoSansSC-Light.woff2 @encoding=dataURI}) format('woff2');
+                font-weight: 300;
+            }
+            @font-face {
+                font-family: "NotoSans";
+                src: url({#asset NotoSansSC-Medium.woff2 @encoding=dataURI}) format('woff2');
+                font-weight: 400;
+            }
+
+            html, body {
+                font-family: "NVIDIASans", "NotoSans" !important;
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+            }
             html,
             body {
                 margin: 0px;
@@ -14,7 +40,8 @@
                 margin-top: 0px;
                 text-align: center;
                 font-size: 24px;
-                font-family: arial;
+                font-family: "NVIDIASans", "NotoSans" !important;
+                font-weight: 300;
             }
             .toc-content {
                 display: flex;
@@ -33,7 +60,8 @@
             }
             .toc ul {
                 font-size: 20px;
-                font-family: arial;
+                font-family: "NVIDIASans", "NotoSans" !important;
+                font-weight: 300;
             }
             .toc ul ul,
             .toc ul ul span {
