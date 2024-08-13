@@ -1,4 +1,4 @@
-function level (chapters, opts, currentLevel = 0) {
+function level(chapters, opts, currentLevel = 0) {
     let res = ''
 
     for (const ch of chapters) {
@@ -7,9 +7,13 @@ function level (chapters, opts, currentLevel = 0) {
         }
         if (currentLevel === 0) {
             res += '<div style=\'page-break-before: always;\'></div>';
-            res += opts.fn({ ...ch, type: 'menu' });
+            res += opts.fn({ ...ch,
+                type: 'menu'
+            });
         } else {
-            res += opts.fn({ ...ch, type: 'submenu' });
+            res += opts.fn({ ...ch,
+                type: 'submenu'
+            });
         }
 
         if (ch.topicPages) {
@@ -20,7 +24,7 @@ function level (chapters, opts, currentLevel = 0) {
     return res
 }
 
-function currentYear () {
+function currentYear() {
     const date = new Date();
     return date.getFullYear();
 }

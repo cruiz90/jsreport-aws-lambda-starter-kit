@@ -2,6 +2,33 @@
 
 <head>
     <style>
+        @font-face {
+            font-family: "NVIDIASans";
+            src: url({#asset NVIDIASans-Light.woff2 @encoding=dataURI}) format('woff2');
+            font-weight: 300;
+        }
+        @font-face {
+            font-family: "NVIDIASans";
+            src: url({#asset NVIDIASans-Medium.woff2 @encoding=dataURI}) format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "NotoSans";
+            src: url({#asset NotoSansSC-Light.woff2 @encoding=dataURI}) format('woff2');
+            font-weight: 300;
+        }
+        @font-face {
+            font-family: "NotoSans";
+            src: url({#asset NotoSansSC-Medium.woff2 @encoding=dataURI}) format('woff2');
+            font-weight: 400;
+        }
+
+        html, body {
+            font-family: "NVIDIASans", "NotoSans" !important;
+            font-weight: 300;
+            -webkit-font-smoothing: antialiased;
+        }
+        
         {{asset "book-styles.css"}}
     </style>
     <meta charset="UTF-8">
