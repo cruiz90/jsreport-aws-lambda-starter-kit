@@ -45,7 +45,9 @@ p {
 
 body,
 html {
-  font-family: arial;
+  font-family: "NVIDIASans", "NotoSans" !important;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
 }
 
 table p {
