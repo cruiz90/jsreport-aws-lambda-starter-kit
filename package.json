@@ -10,13 +10,14 @@
   },
   "dependencies": {
     "@sparticuz/chromium": "123.0.1",
-    "jsreport": "4.3.1",
-    "fs-extra": "11.1.1"
+    "fs-extra": "11.1.1",
+    "jsreport": "4.6.0"
   },
   "devDependencies": {
-    "aws-sdk": "2.1395.0",
+    "@aws-sdk/client-s3": "3.633.0",
+    "archiver": "5.3.1",
+    "aws-sdk": "2.1678.0",
     "p-limit": "4.0.0",
-    "rimraf": "5.0.1",
-    "archiver": "5.3.1"
+    "rimraf": "5.0.1"
   }
 }
