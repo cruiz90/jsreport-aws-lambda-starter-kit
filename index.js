@@ -40,11 +40,13 @@ exports.handler = async (event) => {
   const jsonPayload = JSON.parse(payload)
 
   const res = await jsreport.render(jsonPayload.renderRequest)
-  const reportName = `reports/${res.meta.profileId}.pdf`
+  const destinationBucket = event.destinationBucket
+  const awsRegion = event.awsRegion
+  const reportName = event.reportName
   const data = await savePDFToS3(bucketName, reportName, res.content)
   const url =
     data.$metadata.httpStatusCode == 200
-      ? `https://jsreportbucket3.s3.us-west-1.amazonaws.com/${reportName}`
+      ? `https://${destinationBucket}.s3.${awsRegion}.amazonaws.com/${reportName}`
       : 'There was an error generating the report'
 
   const response = {
