@@ -106,9 +106,14 @@ thead:empty + tfoot + tbody tr:first-of-type {
   border: 1px solid #eee;
   border-left-width: 20px;
   border-radius: 2px;
+  font-family: "RobotoMono" !important;
   padding: 10px;
   position: relative;
   line-height: 1.57;
+}
+
+.code-body pre {
+  font-family: "RobotoMono" !important;
 }
 
 .code-body .keyword {
@@ -225,9 +230,14 @@ bsp-code-inline {
   border: 1px solid #ccc;
   border-radius: 4px;
   color: #4b4545;
+  font-family: "RobotoMono" !important;
   display: inline-block;
   padding: 1px 4px;
 }
+
+bsp-code-in-line pre {
+  font-family: "RobotoMono"!important;
+} 
 
 .crossmark {
   position: relative;
