@@ -1,32 +1,39 @@
 {
-    "httpPort": 5488,
-    "trustUserCode": true,
-    "store": {
-        "provider": "fs"
+  "httpPort": 5488,
+  "trustUserCode": true,
+  "store": {
+    "provider": "fs"
+  },
+  "blobStorage": {
+    "provider": "fs"
+  },
+  "timeout": 1800000,
+  "reportTimeout": 1800000,
+  "extensions": {
+    "studio": {
+      "enabled": true
     },
-    "blobStorage": {
-        "provider": "fs"
+    "fs-store": {
+      "dataDirectory": "data"
     },
-    "timeout": 60000,
-    "extensions": {
-        "studio": {
-            "enabled": true
-        },
-        "fs-store": {
-            "dataDirectory": "data"
-        },
-        "authentication": {
-            "cookieSession": {
-                "secret": "<your strong secret>"
-            },
-            "admin": {
-                "username": "admin",
-                "password": "password"
-            },
-            "enabled": false
-        },
-        "sample-template": {
-            "createSamples": true
-        }
+    "authentication": {
+      "cookieSession": {
+        "secret": "<your strong secret>"
+      },
+      "admin": {
+        "username": "admin",
+        "password": "password"
+      },
+      "enabled": false
+    },
+    "sample-template": {
+      "createSamples": true
+    },
+    "chrome-pdf": {
+      "launchOptions": {
+        "args": ["--no-sandbox"],
+        "protocolTimeout": 1800000
+      }
     }
+  }
 }
