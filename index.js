@@ -14,42 +14,107 @@ console.log('starting')
 const init = (async () => {
   // this speeds up cold start by some ~500ms
   precreateExtensionsLocationsCache()
-
-  jsreport = JsReport({
-    configFile: path.join(__dirname, 'prod.config.json'),
-    chrome: {
-      launchOptions: {
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-        ignoreHTTPSErrors: true,
+  try {
+    jsreport = JsReport({
+      configFile: path.join(__dirname, 'prod.config.json'),
+      chrome: {
+        launchOptions: {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
+        },
       },
-    },
-  })
-  await FS.copy(path.join(__dirname, 'data'), '/tmp/data')
-  return jsreport.init()
+    })
+  } catch (e) {
+    console.error('Error creating jsreport object:', e)
+    throw e
+  }
+  try {
+    await FS.copy(path.join(__dirname, 'data'), '/tmp/data')
+  } catch (e) {
+    console.error('Error copying data folder:', e)
+    throw e
+  }
+  let jsreportInitialized
+  try {
+    jsreportInitialized = jsreport.init()
+  } catch (e) {
+    console.error('Error initializing jsreport:', e)
+    throw e
+  }
+  return jsreportInitialized
 })()
 
 exports.handler = async (event) => {
   console.log('handling event')
-  await init
+  try {
+    await init
+  } catch (err) {
+    console.error('Error initializing jsreport:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error initializing jsreport',
+        message: err.message,
+      },
+    }
+  }
   const bucketName = event.s3Bucket
+  const region = event.region
   const filePath = event.s3Key
-  const payload = await readPayloadFromS3(bucketName, filePath)
+  let payload = {}
+  try {
+    payload = await readPayloadFromS3(bucketName, filePath)
+  } catch (err) {
+    console.error('Error reading payload from S3:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error reading payload from S3',
+        message: err.message,
+      },
+    }
+  }
   const jsonPayload = JSON.parse(payload)
 
-  const res = await jsreport.render(jsonPayload.renderRequest)
+  let res = {}
+  try {
+    res = await jsreport.render(jsonPayload.renderRequest)
+  } catch (err) {
+    console.error('Error rendering report:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error rendering report',
+        message: err.message,
+      },
+    }
+  }
   const reportName = `reports/${res.meta.profileId}.pdf`
-  const data = await savePDFToS3(bucketName, reportName, res.content)
+  let data = {}
+  try {
+    data = await savePDFToS3(bucketName, reportName, res.content)
+  } catch (err) {
+    console.error('Error saving PDF to S3:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error saving PDF to S3',
+        message: err.message,
+      },
+    }
+  }
   const url =
     data.$metadata.httpStatusCode == 200
-      ? `https://jsreportbucket3.s3.us-west-1.amazonaws.com/${reportName}`
+      ? `https://${bucketName}.s3.${region}.amazonaws.com/${reportName}`
       : 'There was an error generating the report'
 
   const response = {
     statusCode: data.$metadata.httpStatusCode,
     body: url,
+    logs: res.logs || 'empty',
   }
   return response
 }
