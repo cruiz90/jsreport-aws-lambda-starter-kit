@@ -3,6 +3,7 @@ const FS = require('fs-extra')
 const path = require('path')
 const os = require('os')
 const { S3 } = require('@aws-sdk/client-s3')
+const { Upload } = require('@aws-sdk/lib-storage')
 
 const chromium = require('@sparticuz/chromium')
 chromium.setHeadlessMode = true
@@ -24,6 +25,7 @@ const init = (async () => {
           executablePath: await chromium.executablePath(),
           headless: chromium.headless,
           ignoreHTTPSErrors: true,
+          protocolTimeout: 900000,
         },
       },
     })
@@ -78,45 +80,76 @@ exports.handler = async (event) => {
     }
   }
   const jsonPayload = JSON.parse(payload)
+  const reportName = `reports/${
+    jsonPayload.renderRequest.data.result.title
+  }_${new Date().getTime()}.pdf`
+  let uploadResult
+  try {
+    uploadResult = await renderAndStreamToS3(
+      bucketName,
+      reportName,
+      jsonPayload.renderRequest
+    )
+  } catch (err) {
+    console.error('Error generating or saving PDF:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error generating report',
+        message: err.message,
+      },
+    }
+  }
 
-  let res = {}
-  try {
-    res = await jsreport.render(jsonPayload.renderRequest)
-  } catch (err) {
-    console.error('Error rendering report:', err)
-    return {
-      statusCode: 500,
-      body: {
-        title: 'Error rendering report',
-        message: err.message,
-      },
-    }
-  }
-  const reportName = `reports/${res.meta.profileId}.pdf`
-  let data = {}
-  try {
-    data = await savePDFToS3(bucketName, reportName, res.content)
-  } catch (err) {
-    console.error('Error saving PDF to S3:', err)
-    return {
-      statusCode: 500,
-      body: {
-        title: 'Error saving PDF to S3',
-        message: err.message,
-      },
-    }
-  }
   const url =
-    data.$metadata.httpStatusCode == 200
+    uploadResult.$metadata.httpStatusCode === 200
       ? `https://${bucketName}.s3.${region}.amazonaws.com/${reportName}`
       : 'There was an error generating the report'
 
   const response = {
-    statusCode: data.$metadata.httpStatusCode,
+    statusCode: uploadResult.$metadata.httpStatusCode || 500,
     body: url,
-    logs: res.logs || 'empty',
   }
   return response
+}
+
+async function renderAndStreamToS3(bucketName, reportName, renderRequest) {
+  const s3client = new S3()
+
+  const uploadParams = {
+    Bucket: bucketName,
+    Key: reportName,
+    Body: null, // Will be assigned the stream later
+  }
+
+  try {
+    // Request the report rendering as a stream
+    const res = await jsreport.render({
+      ...renderRequest,
+      options: {
+        preview: { enabled: false }, // Disable preview
+      },
+      stream: true, // Request streaming output
+    })
+
+    // Set the Body of the upload parameters to the stream
+    uploadParams.Body = res.stream
+
+    // Use the Upload class to handle the stream upload
+    const uploader = new Upload({
+      client: s3client,
+      params: uploadParams,
+    })
+
+    // Start the upload and await its completion
+    const uploadResult = await uploader.done()
+
+    console.log(`PDF uploaded successfully to ${bucketName}/${reportName}`)
+    return uploadResult // Return the result of the upload
+  } catch (err) {
+    console.error('Error during report rendering or S3 upload:', err)
+    throw err
+  }
 }
 
 async function readPayloadFromS3(bucketName, filePath) {
@@ -144,27 +177,6 @@ const streamToString = (stream) =>
     stream.on('error', reject)
     stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
   })
-
-async function savePDFToS3(bucketName, reportName, data) {
-  const params = {
-    Bucket: bucketName,
-    Key: reportName,
-    Body: data,
-    Tagging: 'source=jsreport',
-  }
-
-  const s3client = new S3()
-
-  return new Promise((resolve, reject) => {
-    s3client.putObject(params, function (err, data) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
-    })
-  })
-}
 
 async function precreateExtensionsLocationsCache() {
   const rootDir = path.join(path.dirname(require.resolve('jsreport')), '../../')

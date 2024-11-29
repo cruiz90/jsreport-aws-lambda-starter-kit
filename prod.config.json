@@ -8,8 +8,8 @@
     "provider": "fs",
     "dataDirectory": "/tmp/storage"
   },
-  "timeout": 1800000,
-  "reportTimeout": 1800000,
+  "timeout": 900000,
+  "reportTimeout": 900000,
   "logger": {
     "file": {
       "silent": true
@@ -30,12 +30,6 @@
     },
     "cli": {
       "enabled": false
-    },
-    "chrome-pdf": {
-      "launchOptions": {
-        "args": ["--no-sandbox"],
-        "protocolTimeout": 1800000
-      }
     },
     "express": {
       "enabled": false
