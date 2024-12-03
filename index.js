@@ -66,6 +66,7 @@ exports.handler = async (event) => {
   const bucketName = event.s3Bucket
   const region = event.region
   const filePath = event.s3Key
+  const reportName = event.reportPath // this can include the folder, ie 'reports/ReportName.pdf' or only the name 'ReportName.pdf'
   let payload = {}
   try {
     payload = await readPayloadFromS3(bucketName, filePath)
@@ -80,9 +81,6 @@ exports.handler = async (event) => {
     }
   }
   const jsonPayload = JSON.parse(payload)
-  const reportName = `reports/${
-    jsonPayload.renderRequest.data.result.title
-  }_${new Date().getTime()}.pdf`
   let uploadResult
   try {
     uploadResult = await renderAndStreamToS3(
