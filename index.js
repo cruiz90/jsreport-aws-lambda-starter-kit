@@ -3,6 +3,7 @@ const FS = require('fs-extra')
 const path = require('path')
 const os = require('os')
 const { S3 } = require('@aws-sdk/client-s3')
+const { Upload } = require('@aws-sdk/lib-storage')
 
 const chromium = require('@sparticuz/chromium')
 chromium.setHeadlessMode = true
@@ -14,44 +15,139 @@ console.log('starting')
 const init = (async () => {
   // this speeds up cold start by some ~500ms
   precreateExtensionsLocationsCache()
-
-  jsreport = JsReport({
-    configFile: path.join(__dirname, 'prod.config.json'),
-    chrome: {
-      launchOptions: {
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-        ignoreHTTPSErrors: true,
+  try {
+    jsreport = JsReport({
+      configFile: path.join(__dirname, 'prod.config.json'),
+      chrome: {
+        launchOptions: {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
+          protocolTimeout: 900000,
+        },
       },
-    },
-  })
-  await FS.copy(path.join(__dirname, 'data'), '/tmp/data')
-  return jsreport.init()
+    })
+  } catch (e) {
+    console.error('Error creating jsreport object:', e)
+    throw e
+  }
+  try {
+    await FS.copy(path.join(__dirname, 'data'), '/tmp/data')
+  } catch (e) {
+    console.error('Error copying data folder:', e)
+    throw e
+  }
+  let jsreportInitialized
+  try {
+    jsreportInitialized = jsreport.init()
+  } catch (e) {
+    console.error('Error initializing jsreport:', e)
+    throw e
+  }
+  return jsreportInitialized
 })()
 
 exports.handler = async (event) => {
   console.log('handling event')
-  await init
+  try {
+    await init
+  } catch (err) {
+    console.error('Error initializing jsreport:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error initializing jsreport',
+        message: err.message,
+      },
+    }
+  }
   const bucketName = event.s3Bucket
+  const region = event.region
   const filePath = event.s3Key
-  const payload = await readPayloadFromS3(bucketName, filePath)
+  const reportName = event.reportPath // this can include the folder, ie 'reports/ReportName.pdf' or only the name 'ReportName.pdf'
+  let payload = {}
+  try {
+    payload = await readPayloadFromS3(bucketName, filePath)
+  } catch (err) {
+    console.error('Error reading payload from S3:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error reading payload from S3',
+        message: err.message,
+      },
+    }
+  }
   const jsonPayload = JSON.parse(payload)
+  let uploadResult
+  try {
+    uploadResult = await renderAndStreamToS3(
+      bucketName,
+      reportName,
+      jsonPayload.renderRequest
+    )
+  } catch (err) {
+    console.error('Error generating or saving PDF:', err)
+    return {
+      statusCode: 500,
+      body: {
+        title: 'Error generating report',
+        message: err.message,
+      },
+    }
+  }
 
-  const res = await jsreport.render(jsonPayload.renderRequest)
-  const reportName = `reports/${res.meta.profileId}.pdf`
-  const data = await savePDFToS3(bucketName, reportName, res.content)
   const url =
-    data.$metadata.httpStatusCode == 200
-      ? `https://jsreportbucket3.s3.us-west-1.amazonaws.com/${reportName}`
+    uploadResult.$metadata.httpStatusCode === 200
+      ? `https://${bucketName}.s3.${region}.amazonaws.com/${reportName}`
       : 'There was an error generating the report'
 
   const response = {
-    statusCode: data.$metadata.httpStatusCode,
+    statusCode: uploadResult.$metadata.httpStatusCode || 500,
     body: url,
   }
   return response
+}
+
+async function renderAndStreamToS3(bucketName, reportName, renderRequest) {
+  const s3client = new S3()
+
+  const uploadParams = {
+    Bucket: bucketName,
+    Key: reportName,
+    Body: null, // Will be assigned the stream later
+  }
+
+  try {
+    // Request the report rendering as a stream
+    const res = await jsreport.render({
+      ...renderRequest,
+      options: {
+        preview: { enabled: false }, // Disable preview
+      },
+      stream: true, // Request streaming output
+    })
+
+    // Set the Body of the upload parameters to the stream
+    uploadParams.Body = res.stream
+
+    // Use the Upload class to handle the stream upload
+    const uploader = new Upload({
+      client: s3client,
+      params: uploadParams,
+    })
+
+    // Start the upload and await its completion
+    const uploadResult = await uploader.done()
+
+    console.log(`PDF uploaded successfully to ${bucketName}/${reportName}`)
+    return uploadResult // Return the result of the upload
+  } catch (err) {
+    console.error('Error during report rendering or S3 upload:', err)
+    throw err
+  }
 }
 
 async function readPayloadFromS3(bucketName, filePath) {
@@ -79,27 +175,6 @@ const streamToString = (stream) =>
     stream.on('error', reject)
     stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
   })
-
-async function savePDFToS3(bucketName, reportName, data) {
-  const params = {
-    Bucket: bucketName,
-    Key: reportName,
-    Body: data,
-    Tagging: 'source=jsreport',
-  }
-
-  const s3client = new S3()
-
-  return new Promise((resolve, reject) => {
-    s3client.putObject(params, function (err, data) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
-    })
-  })
-}
 
 async function precreateExtensionsLocationsCache() {
   const rootDir = path.join(path.dirname(require.resolve('jsreport')), '../../')
